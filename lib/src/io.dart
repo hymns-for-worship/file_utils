@@ -2,14 +2,17 @@ import 'dart:typed_data';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // Pick string file from html file input
-Future<String?> pickStringFile({
+Future<String?> pickStringFile(
+  BuildContext context, {
   String extension = '*',
 }) async {
-  final binary = await pickBinaryFile(extension: extension);
+  final binary = await pickBinaryFile(context, extension: extension);
   if (binary != null) {
     return String.fromCharCodes(binary);
   }
@@ -18,20 +21,16 @@ Future<String?> pickStringFile({
 
 // Save string file
 Future<void> saveStringFile(
+  BuildContext context,
   String contents,
   String filename,
 ) async {
-  final temp = await getApplicationDocumentsDirectory();
-  final file = File('${temp.path}/$filename');
-  if (!file.existsSync()) {
-    await file.create(recursive: true);
-  }
-  await file.writeAsString(contents);
-  await launchUrl(Uri.parse(file.path));
+  await saveBinaryFile(context, contents.codeUnits, filename);
 }
 
 // Pick binary file
-Future<Uint8List?> pickBinaryFile({
+Future<Uint8List?> pickBinaryFile(
+  BuildContext context, {
   String extension = '*',
 }) async {
   final result = await FilePicker.platform.pickFiles(
@@ -47,14 +46,15 @@ Future<Uint8List?> pickBinaryFile({
 
 // Save binary file
 Future<void> saveBinaryFile(
+  BuildContext context,
   List<int> contents,
   String filename,
 ) async {
+  final box = context.findRenderObject() as RenderBox?;
+  final origin = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
   final temp = await getApplicationDocumentsDirectory();
   final file = File('${temp.path}/$filename');
-  if (!file.existsSync()) {
-    await file.create(recursive: true);
-  }
+  if (!file.existsSync()) await file.create(recursive: true);
   await file.writeAsBytes(contents);
-  await launchUrl(Uri.parse(file.path));
+  await Share.shareFiles([file.path], sharePositionOrigin: origin);
 }

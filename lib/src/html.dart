@@ -3,8 +3,11 @@
 import 'dart:html' as html;
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+
 // Pick string file from html file input
-Future<String?> pickStringFile({
+Future<String?> pickStringFile(
+  BuildContext context, {
   String extension = '*',
 }) async {
   final input = html.FileUploadInputElement();
@@ -25,6 +28,7 @@ Future<String?> pickStringFile({
 
 // Save string file
 Future<void> saveStringFile(
+  BuildContext context,
   String contents,
   String filename,
 ) async {
@@ -38,7 +42,8 @@ Future<void> saveStringFile(
 }
 
 // Pick binary file
-Future<Uint8List?> pickBinaryFile({
+Future<Uint8List?> pickBinaryFile(
+  BuildContext context, {
   String extension = '*',
 }) async {
   final input = html.FileUploadInputElement();
@@ -59,6 +64,7 @@ Future<Uint8List?> pickBinaryFile({
 
 // Save binary file
 Future<void> saveBinaryFile(
+  BuildContext context,
   List<int> contents,
   String filename,
 ) async {

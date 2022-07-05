@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // Pick string file from html file input
@@ -20,7 +21,8 @@ Future<void> saveStringFile(
   String contents,
   String filename,
 ) async {
-  final file = File(filename);
+  final temp = await getApplicationDocumentsDirectory();
+  final file = File('${temp.path}/$filename');
   if (!file.existsSync()) {
     await file.create(recursive: true);
   }
@@ -48,7 +50,8 @@ Future<void> saveBinaryFile(
   List<int> contents,
   String filename,
 ) async {
-  final file = File(filename);
+  final temp = await getApplicationDocumentsDirectory();
+  final file = File('${temp.path}/$filename');
   if (!file.existsSync()) {
     await file.create(recursive: true);
   }

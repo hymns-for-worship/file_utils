@@ -1,0 +1,21 @@
+name: file_utils
+description: Cross platform file utils
+version: 0.0.1
+publish_to: "none"
+
+environment:
+  sdk: ">=2.18.0-189.0.dev <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  file_picker: ^4.6.1
+  flutter:
+    sdk: flutter
+  url_launcher: ^6.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:

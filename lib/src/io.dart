@@ -5,7 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 // Pick string file from html file input
 Future<String?> pickStringFile(
@@ -53,7 +52,7 @@ Future<void> saveBinaryFile(
   final box = context.findRenderObject() as RenderBox?;
   final origin = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
   final temp = await getApplicationDocumentsDirectory();
-  final file = File('${temp.path}/$filename');
+  final file = File('${temp.path}/downloads/$filename');
   if (!file.existsSync()) await file.create(recursive: true);
   await file.writeAsBytes(contents);
   await Share.shareFiles([file.path], sharePositionOrigin: origin);

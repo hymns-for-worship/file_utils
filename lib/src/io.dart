@@ -44,16 +44,18 @@ Future<Uint8List?> pickBinaryFile(
 }
 
 // Save binary file
-Future<void> saveBinaryFile(
+Future<String> saveBinaryFile(
   BuildContext context,
   List<int> contents,
-  String filename,
-) async {
+  String filename, {
+  bool share = true,
+}) async {
   final box = context.findRenderObject() as RenderBox?;
   final origin = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
   final temp = await getApplicationDocumentsDirectory();
   final file = File('${temp.path}/downloads/$filename');
   if (!file.existsSync()) await file.create(recursive: true);
   await file.writeAsBytes(contents);
-  await Share.shareFiles([file.path], sharePositionOrigin: origin);
+  if (share) await Share.shareFiles([file.path], sharePositionOrigin: origin);
+  return file.path;
 }

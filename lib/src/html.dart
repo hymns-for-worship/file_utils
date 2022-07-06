@@ -63,11 +63,12 @@ Future<Uint8List?> pickBinaryFile(
 }
 
 // Save binary file
-Future<void> saveBinaryFile(
+Future<String> saveBinaryFile(
   BuildContext context,
   List<int> contents,
-  String filename,
-) async {
+  String filename, {
+  bool share = true,
+}) async {
   final blob = html.Blob([contents], 'application/octet-stream');
   final url = html.Url.createObjectUrlFromBlob(blob);
   final link = html.AnchorElement()
@@ -75,4 +76,5 @@ Future<void> saveBinaryFile(
     ..download = filename
     ..click();
   html.Url.revokeObjectUrl(url);
+  return url;
 }

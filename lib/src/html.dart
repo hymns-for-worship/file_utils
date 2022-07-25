@@ -78,3 +78,7 @@ Future<String> saveBinaryFile(
   html.Url.revokeObjectUrl(url);
   return url;
 }
+
+Future<Uint8List?> readBinaryFile(String filename) async {
+  return null;
+}

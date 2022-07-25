@@ -1,6 +1,6 @@
 name: file_utils
 description: Cross platform file utils
-version: 0.0.2+2
+version: 0.0.2+3
 publish_to: "none"
 
 environment:

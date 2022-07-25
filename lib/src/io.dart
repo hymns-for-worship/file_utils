@@ -59,3 +59,13 @@ Future<String> saveBinaryFile(
   if (share) await Share.shareFiles([file.path], sharePositionOrigin: origin);
   return file.path;
 }
+
+Future<Uint8List?> readBinaryFile(String filename) async {
+  final temp = await getApplicationDocumentsDirectory();
+  final file = File('${temp.path}/downloads/$filename');
+  if (file.existsSync()) {
+    final bytes = await file.readAsBytes();
+    return bytes;
+  }
+  return null;
+}

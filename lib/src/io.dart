@@ -22,9 +22,10 @@ Future<String?> pickStringFile(
 Future<void> saveStringFile(
   BuildContext context,
   String contents,
-  String filename,
-) async {
-  await saveBinaryFile(context, contents.codeUnits, filename);
+  String filename, {
+  bool share = true,
+}) async {
+  await saveBinaryFile(context, contents.codeUnits, filename, share: share);
 }
 
 // Pick binary file
@@ -68,4 +69,20 @@ Future<Uint8List?> readBinaryFile(String filename) async {
     return bytes;
   }
   return null;
+}
+
+Future<String?> readStringFile(String filename) async {
+  final bytes = await readBinaryFile(filename);
+  if (bytes != null) {
+    return String.fromCharCodes(bytes);
+  }
+  return null;
+}
+
+Future<void> deleteFile(String filename) async {
+  final temp = await getApplicationDocumentsDirectory();
+  final file = File('${temp.path}/downloads/$filename');
+  if (file.existsSync()) {
+    await file.delete();
+  }
 }

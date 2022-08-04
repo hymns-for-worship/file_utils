@@ -30,7 +30,9 @@ Future<String?> pickStringFile(
 Future<void> saveStringFile(
   BuildContext context,
   String contents,
-  String filename,
+  String filename, {
+  bool share = true,
+}
 ) async {
   final blob = html.Blob([contents.codeUnits], 'text/plain');
   final url = html.Url.createObjectUrlFromBlob(blob);
@@ -79,6 +81,16 @@ Future<String> saveBinaryFile(
   return url;
 }
 
+Future<String?> readStringFile(String filename) async {
+  final bytes = await readBinaryFile(filename);
+  if (bytes != null) {
+    return String.fromCharCodes(bytes);
+  }
+  return null;
+}
+
 Future<Uint8List?> readBinaryFile(String filename) async {
   return null;
 }
+
+Future<void> deleteFile(String filename) async {}

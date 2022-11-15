@@ -51,13 +51,17 @@ Future<String> saveBinaryFile(
   String filename, {
   bool share = true,
 }) async {
-  final box = context.findRenderObject() as RenderBox?;
-  final origin = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
   final temp = await getApplicationDocumentsDirectory();
   final file = File('${temp.path}/downloads/$filename');
   if (!file.existsSync()) await file.create(recursive: true);
   await file.writeAsBytes(contents);
-  if (share) await Share.shareFiles([file.path], sharePositionOrigin: origin);
+  if (share) {
+    // ignore: use_build_context_synchronously
+    final box = context.findRenderObject() as RenderBox?;
+    final origin =
+        box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+    await Share.shareFiles([file.path], sharePositionOrigin: origin);
+  }
   return file.path;
 }
 

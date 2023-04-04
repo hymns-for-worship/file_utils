@@ -1,7 +1,8 @@
-import 'dart:typed_data';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -20,12 +21,19 @@ Future<String?> pickStringFile(
 
 // Save string file
 Future<void> saveStringFile(
-  BuildContext context,
   String contents,
   String filename, {
   bool share = true,
+  BuildContext? context,
+  String? mimeType,
 }) async {
-  await saveBinaryFile(context, contents.codeUnits, filename, share: share);
+  await saveBinaryFile(
+    contents.codeUnits,
+    filename,
+    share: share,
+    context: context,
+    mimeType: mimeType,
+  );
 }
 
 // Pick binary file
@@ -46,22 +54,41 @@ Future<Uint8List?> pickBinaryFile(
 
 // Save binary file
 Future<String> saveBinaryFile(
-  BuildContext context,
   List<int> contents,
   String filename, {
+  BuildContext? context,
+  String? mimeType,
   bool share = true,
 }) async {
+  if (share) {
+    final p = defaultTargetPlatform;
+    final file = XFile.fromData(
+      Uint8List.fromList(contents),
+      path: filename,
+      mimeType: mimeType,
+    );
+    if (!(p == TargetPlatform.android || p == TargetPlatform.iOS)) {
+      final path = await getSavePath(
+        suggestedName: filename,
+      );
+      if (path != null) {
+        await file.saveTo(path);
+        return path;
+      }
+    }
+    // ignore: use_build_context_synchronously
+    final box = context?.findRenderObject() as RenderBox?;
+    final origin = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+    await Share.shareXFiles(
+      [file],
+      sharePositionOrigin: origin,
+    );
+    return '';
+  }
   final temp = await getApplicationDocumentsDirectory();
   final file = File('${temp.path}/downloads/$filename');
   if (!file.existsSync()) await file.create(recursive: true);
   await file.writeAsBytes(contents);
-  if (share) {
-    // ignore: use_build_context_synchronously
-    final box = context.findRenderObject() as RenderBox?;
-    final origin =
-        box != null ? box.localToGlobal(Offset.zero) & box.size : null;
-    await Share.shareFiles([file.path], sharePositionOrigin: origin);
-  }
   return file.path;
 }
 

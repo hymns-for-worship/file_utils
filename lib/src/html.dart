@@ -28,12 +28,12 @@ Future<String?> pickStringFile(
 
 // Save string file
 Future<void> saveStringFile(
-  BuildContext context,
   String contents,
   String filename, {
   bool share = true,
-}
-) async {
+  BuildContext? context,
+  String? mimeType,
+}) async {
   final blob = html.Blob([contents.codeUnits], 'text/plain');
   final url = html.Url.createObjectUrlFromBlob(blob);
   final link = html.AnchorElement()
@@ -66,10 +66,11 @@ Future<Uint8List?> pickBinaryFile(
 
 // Save binary file
 Future<String> saveBinaryFile(
-  BuildContext context,
   List<int> contents,
   String filename, {
   bool share = true,
+  BuildContext? context,
+  String? mimeType,
 }) async {
   final blob = html.Blob([contents], 'application/octet-stream');
   final url = html.Url.createObjectUrlFromBlob(blob);

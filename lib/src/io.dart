@@ -62,12 +62,16 @@ Future<String> saveBinaryFile(
 }) async {
   if (share) {
     final p = defaultTargetPlatform;
-    final file = XFile.fromData(
-      Uint8List.fromList(contents),
-      path: filename,
-      mimeType: mimeType,
-    );
+    final bytes = Uint8List.fromList(contents);
+    XFile? file;
     if (!(p == TargetPlatform.android || p == TargetPlatform.iOS)) {
+      file = XFile.fromData(
+        bytes,
+        path: filename,
+        mimeType: mimeType,
+        length: bytes.length,
+        name: filename,
+      );
       final path = await getSavePath(
         suggestedName: filename,
       );
@@ -75,6 +79,18 @@ Future<String> saveBinaryFile(
         await file.saveTo(path);
         return path;
       }
+    } else {
+      final temp = await getApplicationDocumentsDirectory();
+      final tempFile = File('${temp.path}/downloads/$filename');
+      if (!tempFile.existsSync()) await tempFile.create(recursive: true);
+      await tempFile.writeAsBytes(bytes);
+      file = XFile(
+        tempFile.path,
+        mimeType: mimeType,
+        length: bytes.length,
+        bytes: bytes,
+        name: filename,
+      );
     }
     // ignore: use_build_context_synchronously
     final box = context?.findRenderObject() as RenderBox?;
@@ -83,13 +99,9 @@ Future<String> saveBinaryFile(
       [file],
       sharePositionOrigin: origin,
     );
-    return '';
   }
-  final temp = await getApplicationDocumentsDirectory();
-  final file = File('${temp.path}/downloads/$filename');
-  if (!file.existsSync()) await file.create(recursive: true);
-  await file.writeAsBytes(contents);
-  return file.path;
+
+  return '';
 }
 
 Future<Uint8List?> readBinaryFile(String filename) async {

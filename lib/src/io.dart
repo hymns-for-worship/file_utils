@@ -94,7 +94,8 @@ Future<String> saveBinaryFile(
     }
     // ignore: use_build_context_synchronously
     final box = context?.findRenderObject() as RenderBox?;
-    final origin = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+    final origin =
+        box != null ? box.localToGlobal(Offset.zero) & box.size : null;
     await Share.shareXFiles(
       [file],
       sharePositionOrigin: origin,
